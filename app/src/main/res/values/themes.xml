@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme; actual theming for Compose content lives in ui/theme/Theme.kt.
+         This XML theme only controls the window background/status bar before Compose loads. -->
+    <style name="Theme.PriceTracker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/price_tracker_primary_dark</item>
+        <item name="android:windowBackground">@color/price_tracker_background</item>
+    </style>
+</resources>
