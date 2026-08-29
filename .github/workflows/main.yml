@@ -1,0 +1,52 @@
+name: Build APK
+
+# NOTE ON THE GRADLE WRAPPER:
+# This repository intentionally does NOT ship a pre-built gradle-wrapper.jar binary (it is a
+# compiled jar, and this project was generated in an environment with no access to Gradle's
+# distribution servers to produce one). gradle/actions/setup-gradle below installs a pinned
+# Gradle version instead and invokes `gradle` directly, so the build works out of the box.
+#
+# If you want to use `./gradlew` locally (recommended for day-to-day development, since it
+# guarantees everyone on the project uses the exact same Gradle version), run this once after
+# cloning, with any local Gradle install or Android Studio's bundled Gradle:
+#   gradle wrapper --gradle-version 8.7
+# That generates gradlew, gradlew.bat and gradle/wrapper/gradle-wrapper.jar for you.
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Run unit tests
+        run: gradle testDebugUnitTest --stacktrace
+
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: price-tracker-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
